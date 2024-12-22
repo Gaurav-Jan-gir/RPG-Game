@@ -3,7 +3,7 @@
 void Bullets::load(Player& player)
 {
 	Bullet newBullet(player);
-	if (newBullet.getDirection().x > 0.5f || newBullet.getDirection().y > 0.5f)
+	if (std::abs(newBullet.getDirection().x) > 0.5f || std::abs(newBullet.getDirection().y) > 0.5f)
 		bullets.push_back(newBullet);	
 }
 
