@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Player& player,float s) {
+Bullet::Bullet(Player& player,sf::RenderWindow& window) {
 	shape.setPointCount(5);
 	shape.setPoint(0, sf::Vector2f(0, 0));
 	shape.setPoint(1, sf::Vector2f(0, 8));
@@ -11,16 +11,24 @@ Bullet::Bullet(Player& player,float s) {
 	shape.setOrigin(12, 4);
 	position = player.getPosition() + launchPosition();
 	shape.setPosition(position);
-	direction = launchDirection();
-	shape.setRotation(atan2(direction.y, direction.x) * 180 / 3.14159265);
-	speed = s;
+	direction = launchDirection(window);
+	shape.setRotation(atan2(direction.y, direction.x) * 180 / 3.14159265f);
+}
+
+Bullet::Bullet()
+{
+}
+
+void Bullet::update(sf::Time& clockTime)
+{
+	shape.move(direction * (settings.getSpeed() * clockTime.asMicroseconds() / 1000));
 }
 
 sf::Vector2f Bullet::launchPosition() {
 	return sf::Vector2f(32,16);
 }
 
-sf::Vector2f Bullet::launchDirection() {
+sf::Vector2f Bullet::launchDirection(sf::RenderWindow& window) {
 	sf::Vector2f dir(0.f, 0.f);
 
     // Aggregate directional input
@@ -28,6 +36,11 @@ sf::Vector2f Bullet::launchDirection() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) dir.y += 1; // Down
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) dir.x -= 1; // Left
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) dir.x += 1; // Right
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+		sf::Vector2f playerPos = getPosition();
+		dir = sf::Vector2f(mousePos.x - playerPos.x, mousePos.y - playerPos.y);
+	}
 
     // Normalize the vector if it's non-zero
     float length = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -44,4 +57,5 @@ sf::Vector2f Bullet::getPosition() {
 sf::Vector2f Bullet::getDirection() {
 	return direction;
 }
+
 

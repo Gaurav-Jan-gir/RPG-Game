@@ -2,6 +2,7 @@
 #include "Settings.h"
 #include "Enemy.h"
 #include "Bullets.h"
+#include "Text.h"
 
 int main()
 {
@@ -10,34 +11,53 @@ int main()
 	Settings settings;
 	settings.setup(window, setting);
 
+	sf::Vector2u windowSize = window.getSize();
+
 	Player player;
 	Enemy enemy;
-	Bullets bullets;	
+	Bullets bullets;
+	Text text;
+
+	sf::Clock clock;
+
+	sf::Int64 intTime=100000;
+	sf::Int64 fireRateTime = 0;
 
     while (window.isOpen())
     {
+		sf::Time clockTime = clock.restart();
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+		clock.restart();
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 			window.close();
 		bool caseI = sf::Keyboard::isKeyPressed(sf::Keyboard::I);
 		bool caseJ = sf::Keyboard::isKeyPressed(sf::Keyboard::J);
 		bool caseK = sf::Keyboard::isKeyPressed(sf::Keyboard::K);
 		bool caseL = sf::Keyboard::isKeyPressed(sf::Keyboard::L);
-		if (caseI || caseJ || caseK || caseL)
-			bullets.load(player);
-		player.update();
-		enemy.update();
-		bullets.update();
+		bool caseMouse = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+		if (caseI || caseJ || caseK || caseL || caseMouse)
+			bullets.load(player,window,clockTime,fireRateTime);
+		player.update(clockTime);
+		enemy.update(clockTime);
+		bullets.update(clockTime,enemy);
+
+		intTime += clockTime.asMicroseconds();
+		if (clockTime.asMicroseconds() > 0 && intTime > (int)1e5) {
+			text.setText(std::to_string((int)1e6 / clockTime.asMicroseconds()));
+			intTime = 0;
+		}
+		
 
         window.clear(sf::Color::Black);
 		player.draw(window);
 		bullets.draw(window);
 		enemy.draw(window);
+		text.draw(window);
         window.display();
     }
     return 0;

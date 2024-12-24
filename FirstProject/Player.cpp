@@ -2,21 +2,22 @@
 
 Player::Player()
 {
-	if (!texture.loadFromFile("./Assets/player.png"))  throw std::runtime_error("Failed to load player image");
+	if (!texture.loadFromFile("./Assets/Images/player.png"))  throw std::runtime_error("Failed to load player image");
 	sprite.setTexture(texture);
 	sprite.setTextureRect(sf::IntRect(32, 0, 70, 84));
 	sprite.scale(sf::Vector2f(0.5, 0.5));
 }
 
-void Player::update() {
+void Player::update(sf::Time clockTime) {
+	float scale = settings.getSpeed() * clockTime.asMicroseconds() / 1000;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		sprite.move(-1, 0);
+		sprite.move(-scale, 0);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		sprite.move(1, 0);
+		sprite.move(scale, 0);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		sprite.move(0, -1);
+		sprite.move(0, -scale);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		sprite.move(0, 1);
+		sprite.move(0, scale);
 }
 
 void Player::draw(sf::RenderWindow& window) {
