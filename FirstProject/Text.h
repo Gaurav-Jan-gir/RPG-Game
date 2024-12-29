@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 class Text
 {
-	sf::Text text;
-	sf::Font font;
+	sf::Text* text;
+	sf::Font* font;
 public:
 	Text(std::string font = "./Assets/Fonts/RobotoMono-VariableFont_wght.ttf");
 	void draw(sf::RenderWindow& window);

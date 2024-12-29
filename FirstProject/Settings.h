@@ -39,15 +39,18 @@ public:
 class EnemySettings {
 	float health;
 	float speed;
+	sf::Int64 enemySpawnTime;
 public:
-	EnemySettings(float health = 100.0f, float speed = 1.0f) {
+	EnemySettings(float health = 100.0f, float speed = 1.0f,sf::Int64 enemySpawnTime = 1e6) {
 		this->health = health;
 		this->speed = speed;
+		this->enemySpawnTime = enemySpawnTime;
 	}
 	inline int const getHealth() { return (int)health; }
 	inline int const getSpeed() { return (int)speed; }
 	void setHealth(float health) { this->health = health; }
 	void setSpeed(float speed) { this->speed = speed; }
+	inline sf::Int64 getSpawnTime() { return enemySpawnTime; }
 };
 
 class Settings

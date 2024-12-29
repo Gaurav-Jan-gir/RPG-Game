@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "Bullets.h"
 #include "Text.h"
+#include "Enemies.h"
 
 int main()
 {
@@ -14,7 +15,7 @@ int main()
 	sf::Vector2u windowSize = window.getSize();
 
 	Player player;
-	Enemy enemy;
+	Enemies enemies;
 	Bullets bullets;
 	Text text;
 
@@ -22,6 +23,7 @@ int main()
 
 	sf::Int64 intTime=100000;
 	sf::Int64 fireRateTime = 0;
+	sf::Int64 enemySpawnCounter = 0;
 
     while (window.isOpen())
     {
@@ -43,8 +45,8 @@ int main()
 		if (caseI || caseJ || caseK || caseL || caseMouse)
 			bullets.load(player,window,clockTime,fireRateTime);
 		player.update(clockTime);
-		enemy.update(clockTime);
-		bullets.update(clockTime,enemy);
+		enemies.update(clockTime, enemySpawnCounter,bullets,player.getPosition(),window.getSize());
+		bullets.update(clockTime);
 
 		intTime += clockTime.asMicroseconds();
 		if (clockTime.asMicroseconds() > 0 && intTime > (int)1e5) {
@@ -56,7 +58,7 @@ int main()
         window.clear(sf::Color::Black);
 		player.draw(window);
 		bullets.draw(window);
-		enemy.draw(window);
+		enemies.draw(window);
 		text.draw(window);
         window.display();
     }

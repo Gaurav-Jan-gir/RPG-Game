@@ -1,27 +1,33 @@
 #include "Enemy.h"
 
-Enemy::Enemy()
+Enemy::Enemy(sf::Vector2f pos,sf::Vector2f dir)
 {
-	if (!texture.loadFromFile("./Assets/Images/enemy.png"))  throw std::runtime_error("Failed to load enemy image");
-	sprite.setTexture(texture);
-	sprite.scale(sf::Vector2f(0.35f, 0.35f));
-	sprite.setPosition(100, 100);
-	health.setText(std::to_string(settings.getHealth()));
+	texture = new sf::Texture();
+	if (!texture->loadFromFile("./Assets/Images/enemy.png"))  throw std::runtime_error("Failed to load enemy image");
+	sprite = new sf::Sprite();
+	sprite->setTexture(*texture);
+	sprite->scale(sf::Vector2f(0.35f, 0.35f));
+	position = pos;
+	sprite->setPosition(position);
+	direction = dir;
+	health = new Text();
+	health->setText(std::to_string(settings.getHealth()));
 }
+
+void Enemy::DeletePointers()
+{
+	delete texture;
+	delete sprite;
+	delete health;
+}
+
 void Enemy::update(sf::Time clockTime) {
-	float scale = settings.getSpeed() * clockTime.asMicroseconds() / 1000;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		sprite.move(-scale, 0);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		sprite.move(scale, 0);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		sprite.move(0, -scale);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		sprite.move(0, scale);
-	health.setPosition(sprite.getPosition() + sf::Vector2f(0, -20));
+	sprite->move((direction * float(settings.getSpeed())) * float(clockTime.asMicroseconds() / 10000));
+    health->setPosition(sf::Vector2f(sprite->getPosition().x, sprite->getPosition().y - 10));
 }
 	
 void Enemy::draw(sf::RenderWindow &window) {
-	window.draw(sprite);
-	health.draw(window);
+	if(sprite)
+	window.draw(*sprite);
+	health->draw(window);
 }
